@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم | روح مصريه</title>
+  <link rel="icon" href="assets/images/روح مصريه لوجو.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ===== ADMIN STYLES ===== */
+    .admin-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-card img {
+      width: 80px;
+      margin: 0 auto 20px;
+    }
+
+    .login-card h2 {
+      color: var(--gold-primary);
+      margin-bottom: 10px;
+    }
+
+    .login-card p {
+      color: var(--text-secondary);
+      margin-bottom: 25px;
+    }
+
+    /* Dashboard */
+    .admin-dashboard { display: none; min-height: 100vh; }
+    .admin-dashboard.active { display: block; }
+    .admin-login.hidden { display: none; }
+
+    .admin-header {
+      background: var(--dark-card);
+      border-bottom: 1px solid var(--dark-border);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header img { height: 40px; }
+
+    .admin-header .admin-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      padding: 25px;
+      text-align: center;
+    }
+
+    .stat-card .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--gold-primary);
+      display: block;
+    }
+
+    .stat-card .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+      align-items: center;
+    }
+
+    .filter-bar select, .filter-bar input {
+      padding: 10px 15px;
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-ar);
+      font-size: 0.9rem;
+    }
+
+    .filter-bar select:focus, .filter-bar input:focus {
+      border-color: var(--gold-primary);
+      outline: none;
+    }
+
+    /* Submissions Table / Cards */
+    .submissions-list {
+      display: grid;
+      gap: 20px;
+    }
+
+    .submission-card {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .photo-gallery-thumbs {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .submission-card .photo-thumb {
+      width: 180px;
+      height: 130px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid var(--dark-border);
+    }
+
+    .submission-card .photo-thumb:hover {
+      transform: scale(1.03);
+      border-color: var(--gold-primary);
+    }
+
+    .photos-preview-strip {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
+      overflow-x: auto;
+      width: 180px;
+      padding-bottom: 3px;
+    }
+
+    .photos-preview-strip img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid var(--dark-border);
+    }
+
+    .photos-preview-strip img.active {
+      border-color: var(--gold-primary);
+    }
+
+    .submission-info h4 {
+      color: var(--text-primary);
+      margin-bottom: 5px;
+    }
+
+    .submission-info .meta {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 8px;
+    }
+
+    .submission-info .meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .submission-info .theme-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(212, 160, 23, 0.15);
+      color: var(--gold-primary);
+      border: 1px solid rgba(212, 160, 23, 0.3);
+    }
+
+    .submission-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 130px;
+    }
+
+    /* Rating Stars */
+    .rating {
+      display: flex;
+      gap: 3px;
+      direction: ltr;
+    }
+
+    .rating .star {
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--dark-border);
+      transition: var(--transition);
+    }
+
+    .rating .star.active, .rating .star:hover {
+      color: var(--gold-primary);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-pending { background: rgba(243, 156, 18, 0.2); color: #F39C12; border: 1px solid rgba(243, 156, 18, 0.3); }
+    .status-approved { background: rgba(39, 174, 96, 0.2); color: #27AE60; border: 1px solid rgba(39, 174, 96, 0.3); }
+    .status-rejected { background: rgba(192, 57, 43, 0.2); color: #C0392B; border: 1px solid rgba(192, 57, 43, 0.3); }
+
+    .action-btn {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-family: var(--font-ar);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .btn-approve { background: rgba(39, 174, 96, 0.2); color: #27AE60; }
+    .btn-approve:hover { background: #27AE60; color: white; }
+    .btn-reject { background: rgba(192, 57, 43, 0.2); color: #C0392B; }
+    .btn-reject:hover { background: #C0392B; color: white; }
+    .btn-download { background: rgba(41, 128, 185, 0.2); color: #2980B9; }
+    .btn-download:hover { background: #2980B9; color: white; }
+
+    .no-submissions {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .no-submissions i { font-size: 3rem; margin-bottom: 15px; display: block; }
+
+    /* Photo Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: var(--radius-md);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .submission-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .submission-card .photo-thumb {
+        width: 100%;
+        height: 200px;
+      }
+      .photos-preview-strip {
+        width: 100%;
+        justify-content: center;
+      }
+      .submission-actions {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .filter-bar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== LOGIN ===== -->
+  <div class="admin-login" id="adminLogin">
+    <div class="glass-card login-card">
+      <img src="assets/images/روح مصريه لوجو.jpg" alt="Logo">
+      <h2>لوحة التحكم</h2>
+      <p>ادخل كلمة المرور للوصول لصفحة الأدمن</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="password" class="form-control" id="adminPassword" placeholder="كلمة المرور" style="text-align:center;" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+          <i class="fas fa-lock-open"></i> دخول
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="admin-dashboard" id="adminDashboard">
+    <header class="admin-header">
+      <div class="container">
+        <img src="assets/images/روح مصريه لوجو.jpg" alt="Logo">
+        <div class="admin-actions">
+          <a href="index.html" class="btn btn-secondary" style="font-size:0.85rem; padding:8px 16px;">
+            <i class="fas fa-home"></i> الصفحة الرئيسية
+          </a>
+          <button class="btn btn-outline" style="font-size:0.85rem; padding:8px 16px;" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> خروج
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container" style="padding-top: 20px; padding-bottom: 40px;">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="glass-card stat-card">
+          <div class="stat-icon">📷</div>
+          <span class="stat-number" id="totalSubmissions">0</span>
+          <span class="stat-label">إجمالي المشاركات</span>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-icon">⏳</div>
+          <span class="stat-number" id="pendingCount">0</span>
+          <span class="stat-label">في الانتظار</span>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-icon">✅</div>
+          <span class="stat-number" id="approvedCount">0</span>
+          <span class="stat-label">مقبولة</span>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-icon">❌</div>
+          <span class="stat-number" id="rejectedCount">0</span>
+          <span class="stat-label">مرفوضة</span>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <select id="filterTheme" onchange="filterAndRender()">
+          <option value="">كل المحاور</option>
+          <option value="تراث">التراث والآثار</option>
+          <option value="شوارع">حياة الشارع</option>
+          <option value="طبيعة">الطبيعة والمناظر</option>
+          <option value="بورتريه">البورتريه</option>
+        </select>
+        <select id="filterStatus" onchange="filterAndRender()">
+          <option value="">كل الحالات</option>
+          <option value="pending">في الانتظار</option>
+          <option value="approved">مقبولة</option>
+          <option value="rejected">مرفوضة</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="🔍 بحث بالاسم..." oninput="filterAndRender()">
+      </div>
+
+      <!-- Submissions List -->
+      <div class="submissions-list" id="submissionsList"></div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close">✕</button>
+    <img id="lightboxImg" src="" alt="صورة مكبرة">
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Config & Logic -->
+  <script src="firebase-config.js"></script>
+  <script>
+    // ===== ADMIN PASSWORD =====
+    const ADMIN_PASSWORD = 'rouh2026';
+    let allSubmissions = [];
+
+    // ===== LOGIN =====
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pw = document.getElementById('adminPassword').value;
+      if (pw === ADMIN_PASSWORD) {
+        sessionStorage.setItem('admin_auth', 'true');
+        showDashboard();
+      } else {
+        showToast('كلمة المرور غلط', 'error');
+      }
+    });
+
+    // Check existing session
+    if (sessionStorage.getItem('admin_auth') === 'true') {
+      showDashboard();
+    }
+
+    function showDashboard() {
+      document.getElementById('adminLogin').classList.add('hidden');
+      document.getElementById('adminDashboard').classList.add('active');
+      setupRealtimeListener();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('admin_auth');
+      location.reload();
+    }
+
+    // ===== FIRESTORE REAL-TIME LISTENER =====
+    function setupRealtimeListener() {
+      if (typeof db === 'undefined') {
+        showToast('خطأ: لم يتم تهيئة Firebase. تأكد من إعدادات firebase-config.js', 'error');
+        return;
+      }
+
+      db.collection("submissions").orderBy("submittedAt", "desc").onSnapshot((snapshot) => {
+        allSubmissions = [];
+        snapshot.forEach(doc => {
+          allSubmissions.push({ id: doc.id, ...doc.data() });
+        });
+        filterAndRender();
+      }, (error) => {
+        console.error("Firestore Error:", error);
+        showToast("فشل جلب البيانات من السيرفر", "error");
+      });
+    }
+
+    async function updateSubmission(id, updates) {
+      try {
+        await db.collection("submissions").doc(id).update(updates);
+        showToast("تم التحديث بنجاح ✅", "success");
+      } catch (error) {
+        console.error(error);
+        showToast("فشل التحديث على السيرفر", "error");
+      }
+    }
+
+    // ===== FILTER AND RENDER =====
+    function filterAndRender() {
+      const theme = document.getElementById('filterTheme').value;
+      const status = document.getElementById('filterStatus').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      let filtered = allSubmissions;
+      if (theme) filtered = filtered.filter(s => s.theme === theme);
+      if (status) filtered = filtered.filter(s => s.status === status);
+      if (search) filtered = filtered.filter(s => s.fullName.toLowerCase().includes(search));
+
+      // Update stats
+      document.getElementById('totalSubmissions').textContent = allSubmissions.length;
+      document.getElementById('pendingCount').textContent = allSubmissions.filter(s => s.status === 'pending').length;
+      document.getElementById('approvedCount').textContent = allSubmissions.filter(s => s.status === 'approved').length;
+      document.getElementById('rejectedCount').textContent = allSubmissions.filter(s => s.status === 'rejected').length;
+
+      const list = document.getElementById('submissionsList');
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="no-submissions glass-card">
+            <i class="fas fa-inbox"></i>
+            <h3>لا توجد مشاركات</h3>
+            <p>المشاركات هتظهر هنا لما الناس تسجّل</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = filtered.map(s => {
+        const date = new Date(s.submittedAt).toLocaleDateString('ar-EG', {
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        const statusClass = s.status === 'approved' ? 'status-approved' :
+                            s.status === 'rejected' ? 'status-rejected' : 'status-pending';
+        const statusText = s.status === 'approved' ? 'مقبولة' :
+                           s.status === 'rejected' ? 'مرفوضة' : 'في الانتظار';
+
+        const stars = [1,2,3,4,5].map(n =>
+          `<span class="star ${n <= s.rating ? 'active' : ''}" onclick="rateSubmission('${s.id}', ${n})">★</span>`
+        ).join('');
+
+        // دعم الصور المتعددة
+        const photos = s.photos || [{ url: s.photoBase64, fileName: s.fileName }];
+        const mainPhotoUrl = photos[0].url || photos[0].base64;
+
+        let thumbsHtml = '';
+        if (photos.length > 1) {
+          thumbsHtml = `
+            <div class="photos-preview-strip">
+              ${photos.map((p, idx) => `
+                <img src="${p.url || p.base64}" class="${idx === 0 ? 'active' : ''}" onclick="changeMainPhoto(this, '${s.id}', '${p.url || p.base64}')">
+              `).join('')}
+            </div>
+          `;
+        }
+
+        return `
+          <div class="glass-card submission-card" id="card-${s.id}">
+            <div class="photo-gallery-thumbs">
+              <img src="${mainPhotoUrl}" alt="${s.photoTitle}" class="photo-thumb main-img" onclick="openLightbox(this.src)">
+              ${thumbsHtml}
+            </div>
+            <div class="submission-info">
+              <h4>${s.photoTitle}</h4>
+              <div class="meta">
+                <span><i class="fas fa-user"></i> ${s.fullName}</span>
+                <span><i class="fas fa-envelope"></i> ${s.email}</span>
+                <span><i class="fas fa-phone"></i> ${s.phone}</span>
+                <span><i class="fas fa-calendar"></i> ${date}</span>
+              </div>
+              <span class="theme-badge">${s.theme}</span>
+              <span class="status-badge ${statusClass}">${statusText}</span>
+              ${s.instagram ? `<span style="color:var(--text-muted); font-size:0.85rem; margin-right:10px;"><i class="fab fa-instagram"></i> ${s.instagram}</span>` : ''}
+              ${s.photoDesc ? `<p style="color:var(--text-secondary); font-size:0.85rem; margin-top:8px;">${s.photoDesc}</p>` : ''}
+              <div class="rating" style="margin-top:8px;">${stars}</div>
+            </div>
+            <div class="submission-actions">
+              <button class="action-btn btn-approve" onclick="updateSubmission('${s.id}', {status:'approved'})">
+                <i class="fas fa-check"></i> قبول
+              </button>
+              <button class="action-btn btn-reject" onclick="updateSubmission('${s.id}', {status:'rejected'})">
+                <i class="fas fa-times"></i> رفض
+              </button>
+              <button class="action-btn btn-download" onclick="downloadAllPhotos('${s.id}')">
+                <i class="fas fa-download"></i> تحميل الصور (${photos.length})
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===== CHANGE MAIN PHOTO IN CARD =====
+    function changeMainPhoto(thumbImg, cardId, newUrl) {
+      const card = document.getElementById(`card-${cardId}`);
+      if (!card) return;
+      card.querySelector('.main-img').src = newUrl;
+      card.querySelectorAll('.photos-preview-strip img').forEach(img => img.classList.remove('active'));
+      thumbImg.classList.add('active');
+    }
+
+    // ===== RATING =====
+    function rateSubmission(id, rating) {
+      updateSubmission(id, { rating });
+    }
+
+    // ===== DOWNLOAD ALL PHOTOS =====
+    function downloadAllPhotos(id) {
+      const sub = allSubmissions.find(s => s.id === id);
+      if (!sub) return;
+      const photos = sub.photos || [{ url: sub.photoBase64, fileName: sub.fileName }];
+      photos.forEach((p, idx) => {
+        const a = document.createElement('a');
+        a.href = p.url || p.base64;
+        a.download = p.fileName || `photo-${idx + 1}.jpg`;
+        // Delay to allow multiple downloads
+        setTimeout(() => a.click(), idx * 300);
+      });
+    }
+
+    // ===== LIGHTBOX =====
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    // ===== TOAST =====
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+  </script>
+</body>
+</html>

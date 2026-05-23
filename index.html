@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="مسابقة تصوير روح مصريه - ندعم المصورين لتنمية مهاراتهم وتحويل شغفهم لفنٍ مُلهم. سجّل الآن وشارك بصورك!">
+  <title>روح مصريه | مسابقة التصوير</title>
+  <link rel="icon" href="assets/images/روح مصريه لوجو.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="navbar-logo">
+        <img src="assets/images/روح مصريه لوجو.jpg" alt="روح مصريه">
+      </a>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="#home" class="active">الرئيسية</a></li>
+        <li><a href="#themes">المحاور</a></li>
+        <li><a href="#register">التسجيل</a></li>
+        <li><a href="#my-submissions">مشاركاتي</a></li>
+        <li><a href="#sponsors">الرعاة</a></li>
+        <li><a href="#gallery">المعرض السابق</a></li>
+      </ul>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="القائمة">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <img src="assets/images/hero-bg.png" alt="خلفية مسابقة التصوير">
+    </div>
+    <div class="particles" id="particles"></div>
+    <div class="hero-content">
+      <img src="assets/images/روح مصريه لوجو.jpg" alt="لوجو روح مصريه" class="hero-logo">
+      <h1>مسابقة التصوير الفوتوغرافي</h1>
+      <p>ندعم المصورين لتنميةِ مهاراتهم وتحويلِ شغفهم لفنٍ مُلهم 📸<br>شاركنا رؤيتك لمصر من خلال عدستك</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="number" data-count="2142">0</span>
+          <span class="label">متابع</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number" data-count="305">0</span>
+          <span class="label">منشور</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number" data-count="4">0</span>
+          <span class="label">محاور</span>
+        </div>
+      </div>
+      <div class="hero-buttons">
+        <a href="#register" class="btn btn-primary">
+          <i class="fas fa-camera"></i> سجّل الآن
+        </a>
+        <a href="#themes" class="btn btn-outline">
+          <i class="fas fa-th-large"></i> اكتشف المحاور
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THEMES / المحاور ===== -->
+  <section id="themes">
+    <div class="container">
+      <h2 class="section-title fade-up">محاور المسابقة</h2>
+      <p class="section-subtitle fade-up">اختار المحور اللي يلهمك وشاركنا إبداعك</p>
+      <div class="themes-grid">
+        <div class="glass-card theme-card fade-up" data-theme="تراث">
+          <div class="theme-icon">🏛️</div>
+          <h3>التراث والآثار</h3>
+          <p>صوّر جمال الحضارة المصرية القديمة والمعالم الأثرية</p>
+          <a href="#register" class="btn btn-outline" onclick="selectTheme('تراث')">
+            <i class="fas fa-pen"></i> سجّل في المحور
+          </a>
+        </div>
+        <div class="glass-card theme-card fade-up" data-theme="شوارع">
+          <div class="theme-icon">🏙️</div>
+          <h3>حياة الشارع</h3>
+          <p>التقط لحظات من الحياة اليومية في شوارع مصر</p>
+          <a href="#register" class="btn btn-outline" onclick="selectTheme('شوارع')">
+            <i class="fas fa-pen"></i> سجّل في المحور
+          </a>
+        </div>
+        <div class="glass-card theme-card fade-up" data-theme="طبيعة">
+          <div class="theme-icon">🌅</div>
+          <h3>الطبيعة والمناظر</h3>
+          <p>جمال الطبيعة المصرية من النيل للصحراء للبحر</p>
+          <a href="#register" class="btn btn-outline" onclick="selectTheme('طبيعة')">
+            <i class="fas fa-pen"></i> سجّل في المحور
+          </a>
+        </div>
+        <div class="glass-card theme-card fade-up" data-theme="بورتريه">
+          <div class="theme-icon">👤</div>
+          <h3>البورتريه</h3>
+          <p>وجوه مصرية تحكي قصص - صوّر الناس وحكاياتهم</p>
+          <a href="#register" class="btn btn-outline" onclick="selectTheme('بورتريه')">
+            <i class="fas fa-pen"></i> سجّل في المحور
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== REGISTRATION / التسجيل ===== -->
+  <section class="register-section" id="register">
+    <div class="container">
+      <h2 class="section-title fade-up">سجّل وشارك صورك</h2>
+      <p class="section-subtitle fade-up">املأ البيانات وارفع صورتك للمشاركة في المسابقة</p>
+      <form class="register-form glass-card fade-up" id="registrationForm">
+        <div class="form-group">
+          <label>الاسم الكامل <span class="required">*</span></label>
+          <input type="text" class="form-control" id="fullName" placeholder="اكتب اسمك هنا" required>
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني <span class="required">*</span></label>
+          <input type="email" class="form-control" id="email" placeholder="example@email.com" dir="ltr" required>
+        </div>
+        <div class="form-group">
+          <label>رقم التليفون <span class="required">*</span></label>
+          <input type="tel" class="form-control" id="phone" placeholder="01xxxxxxxxx" dir="ltr" required>
+        </div>
+        <div class="form-group">
+          <label>حساب الإنستجرام</label>
+          <input type="text" class="form-control" id="instagram" placeholder="@username" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label>المحور <span class="required">*</span></label>
+          <select class="form-control" id="theme" required>
+            <option value="">اختار المحور</option>
+            <option value="تراث">التراث والآثار</option>
+            <option value="شوارع">حياة الشارع</option>
+            <option value="طبيعة">الطبيعة والمناظر</option>
+            <option value="بورتريه">البورتريه</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>عنوان الصورة <span class="required">*</span></label>
+          <input type="text" class="form-control" id="photoTitle" placeholder="اكتب عنوان صورتك" required>
+        </div>
+        <div class="form-group">
+          <label>وصف الصورة</label>
+          <textarea class="form-control" id="photoDesc" placeholder="اكتب قصة أو وصف صورتك..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>الصور <span class="required">*</span> <small style="color:var(--text-muted);">(ممكن ترفع أكتر من صورة)</small></label>
+          <div class="upload-area" id="uploadArea">
+            <span class="upload-icon">📷</span>
+            <p>اسحب الصور هنا أو اضغط للاختيار</p>
+            <p class="upload-hint">JPG, PNG - أقصى حجم 10MB لكل صورة - حد أقصى 5 صور</p>
+            <input type="file" id="photoFile" accept="image/*" multiple required>
+          </div>
+          <div class="preview-container" id="previewContainer"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content: center;" id="submitBtn">
+          <i class="fas fa-paper-plane"></i> إرسال المشاركة
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== MY SUBMISSIONS / مشاركاتي ===== -->
+  <section id="my-submissions">
+    <div class="container">
+      <h2 class="section-title fade-up">مشاركاتي</h2>
+      <p class="section-subtitle fade-up">ابحث بالإيميل عشان تشوف مشاركاتك وحالتها</p>
+      <div class="register-form glass-card fade-up" style="max-width:650px; margin:0 auto;">
+        <div class="form-group" style="margin-bottom:0;">
+          <div style="display:flex; gap:10px;">
+            <input type="email" class="form-control" id="lookupEmail" placeholder="ادخل الإيميل اللي سجلت بيه" dir="ltr" style="flex:1;">
+            <button class="btn btn-primary" onclick="lookupSubmissions()" style="white-space:nowrap;">
+              <i class="fas fa-search"></i> بحث
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="mySubmissionsResult" style="margin-top:25px;"></div>
+    </div>
+  </section>
+
+  <!-- ===== SPONSORS / الرعاة ===== -->
+  <section id="sponsors">
+    <div class="container">
+      <h2 class="section-title fade-up">رعاة المسابقة</h2>
+      <p class="section-subtitle fade-up">شكر خاص لرعاتنا اللي بيدعموا المصورين المصريين</p>
+      <div class="sponsors-grid">
+        <div class="glass-card sponsor-card fade-up" onclick="openSponsorModal(0)">
+          <img src="assets/images/sponsor.png" alt="الراعي الذهبي" class="sponsor-logo">
+          <h3>الراعي الذهبي</h3>
+          <p>راعي رئيسي للمسابقة</p>
+          <span class="btn btn-secondary"><i class="fas fa-info-circle"></i> تفاصيل</span>
+        </div>
+        <div class="glass-card sponsor-card fade-up" onclick="openSponsorModal(1)">
+          <img src="assets/images/sponsor.png" alt="الراعي الفضي" class="sponsor-logo">
+          <h3>الراعي الفضي</h3>
+          <p>داعم رسمي للمسابقة</p>
+          <span class="btn btn-secondary"><i class="fas fa-info-circle"></i> تفاصيل</span>
+        </div>
+        <div class="glass-card sponsor-card fade-up" onclick="openSponsorModal(2)">
+          <img src="assets/images/sponsor.png" alt="الراعي البرونزي" class="sponsor-logo">
+          <h3>الراعي البرونزي</h3>
+          <p>شريك إعلامي</p>
+          <span class="btn btn-secondary"><i class="fas fa-info-circle"></i> تفاصيل</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SPONSOR MODAL ===== -->
+  <div class="modal-overlay" id="sponsorModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeSponsorModal()">✕</button>
+      <div style="text-align:center;">
+        <img id="modalSponsorLogo" src="" alt="" style="width:120px; height:120px; border-radius:50%; object-fit:cover; margin: 0 auto 20px; border: 3px solid var(--gold-primary);">
+        <h2 id="modalSponsorName" style="color: var(--gold-primary); margin-bottom: 15px;"></h2>
+        <p id="modalSponsorDesc" style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;"></p>
+        <a id="modalSponsorLink" href="#" target="_blank" class="btn btn-primary">
+          <i class="fas fa-external-link-alt"></i> زيارة الموقع
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GALLERY / المعرض السابق ===== -->
+  <section id="gallery" style="background: var(--dark-card);">
+    <div class="container">
+      <h2 class="section-title fade-up">من المعرض السابق</h2>
+      <p class="section-subtitle fade-up">لقطات مميزة من المعرض اللي فات - شوف إبداع المصورين</p>
+      <div class="gallery-grid fade-up">
+        <div class="gallery-item">
+          <img src="assets/images/gallery.png" alt="صورة من المعرض">
+          <div class="overlay"><p>من المعرض السابق</p></div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/themes.png" alt="صورة من المعرض">
+          <div class="overlay"><p>لقطات مصرية أصيلة</p></div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/hero-bg.png" alt="صورة من المعرض">
+          <div class="overlay"><p>جمال مصر من عدسة المصورين</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="assets/images/روح مصريه لوجو.jpg" alt="روح مصريه">
+          <p>ندعم المصورين لتنميةِ مهاراتهم وتحويلِ شغفهم لفنٍ مُلهم 📸</p>
+        </div>
+        <div class="footer-links">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#themes">المحاور</a></li>
+            <li><a href="#register">التسجيل</a></li>
+            <li><a href="#sponsors">الرعاة</a></li>
+            <li><a href="#gallery">المعرض</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h4>تابعنا</h4>
+          <div class="social-icons">
+            <a href="https://www.instagram.com/egyptian._.soul/" target="_blank" class="social-icon" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="social-icon" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-icon" aria-label="TikTok">
+              <i class="fab fa-tiktok"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 روح مصريه || Egyptian Soul - جميع الحقوق محفوظة</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Config & Logic -->
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
