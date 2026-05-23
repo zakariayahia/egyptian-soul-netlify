@@ -43,6 +43,34 @@ body {
   line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: direction 0.3s ease;
+}
+
+/* English Class Configuration */
+body.lang-en {
+  font-family: var(--font-en);
+  direction: ltr;
+}
+
+body.lang-en .form-control {
+  direction: ltr;
+}
+
+body.lang-en select.form-control {
+  background-position: right 15px center;
+}
+
+body.lang-en .footer-links a:hover {
+  padding-left: 5px;
+  padding-right: 0;
+}
+
+body.lang-en .toast {
+  font-family: var(--font-en);
+}
+
+body.lang-en .btn {
+  font-family: var(--font-en);
 }
 
 a { color: var(--gold-primary); text-decoration: none; transition: var(--transition); }
