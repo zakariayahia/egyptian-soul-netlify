@@ -392,22 +392,37 @@
         </div>
       </div>
 
+      <!-- Theme Distribution -->
+      <div class="glass-card" style="padding: 20px; margin-bottom: 25px;">
+        <h4 style="color: var(--gold-primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
+          <i class="fas fa-chart-pie"></i> توزيع المشاركات على المحاور
+        </h4>
+        <div id="themeProgressBars" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+          <!-- سيتم بناؤه تلقائياً بواسطة JavaScript -->
+        </div>
+      </div>
+
       <!-- Filters -->
-      <div class="filter-bar">
-        <select id="filterTheme" onchange="filterAndRender()">
-          <option value="">كل المحاور</option>
-          <option value="تراث">التراث والآثار</option>
-          <option value="شوارع">حياة الشارع</option>
-          <option value="طبيعة">الطبيعة والمناظر</option>
-          <option value="بورتريه">البورتريه</option>
-        </select>
-        <select id="filterStatus" onchange="filterAndRender()">
-          <option value="">كل الحالات</option>
-          <option value="pending">في الانتظار</option>
-          <option value="approved">مقبولة</option>
-          <option value="rejected">مرفوضة</option>
-        </select>
-        <input type="text" id="searchInput" placeholder="🔍 بحث بالاسم..." oninput="filterAndRender()">
+      <div class="filter-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+        <div style="display:flex; gap:15px; flex-wrap:wrap; align-items:center;">
+          <select id="filterTheme" onchange="filterAndRender()">
+            <option value="">كل المحاور</option>
+            <option value="تراث">التراث والآثار</option>
+            <option value="شوارع">حياة الشارع</option>
+            <option value="طبيعة">الطبيعة والمناظر</option>
+            <option value="بورتريه">البورتريه</option>
+          </select>
+          <select id="filterStatus" onchange="filterAndRender()">
+            <option value="">كل الحالات</option>
+            <option value="pending">في الانتظار</option>
+            <option value="approved">مقبولة</option>
+            <option value="rejected">مرفوضة</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="🔍 بحث بالاسم..." oninput="filterAndRender()">
+        </div>
+        <button class="action-btn" onclick="exportToCSV()" style="background: var(--gold-primary); color: var(--dark-bg); font-weight: bold; padding: 10px 20px; border-radius: var(--radius-sm); border: none; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fas fa-file-excel" style="font-size:1.1rem;"></i> تصدير البيانات (Excel)
+        </button>
       </div>
 
       <!-- Submissions List -->
@@ -491,7 +506,6 @@
         showToast("فشل التحديث على السيرفر", "error");
       }
     }
-
     // ===== FILTER AND RENDER =====
     function filterAndRender() {
       const theme = document.getElementById('filterTheme').value;
@@ -503,11 +517,36 @@
       if (status) filtered = filtered.filter(s => s.status === status);
       if (search) filtered = filtered.filter(s => s.fullName.toLowerCase().includes(search));
 
-      // Update stats
-      document.getElementById('totalSubmissions').textContent = allSubmissions.length;
+      // 1. تحديث الإحصائيات العامة
+      const total = allSubmissions.length;
+      document.getElementById('totalSubmissions').textContent = total;
       document.getElementById('pendingCount').textContent = allSubmissions.filter(s => s.status === 'pending').length;
       document.getElementById('approvedCount').textContent = allSubmissions.filter(s => s.status === 'approved').length;
       document.getElementById('rejectedCount').textContent = allSubmissions.filter(s => s.status === 'rejected').length;
+
+      // 2. تحديث لوحة توزيع المشاركات على المحاور تلقائياً
+      const themesCount = { "تراث": 0, "شوارع": 0, "طبيعة": 0, "بورتريه": 0 };
+      allSubmissions.forEach(s => {
+        if (themesCount[s.theme] !== undefined) themesCount[s.theme]++;
+      });
+
+      const themeLabels = { "تراث": "🏛️ التراث والآثار", "شوارع": "📸 حياة الشارع", "طبيعة": "🌅 الطبيعة والمناظر", "بورتريه": "👤 البورتريه" };
+      let progressHtml = '';
+      for (const [key, count] of Object.entries(themesCount)) {
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+        progressHtml += `
+          <div style="background: var(--dark-surface); border: 1px solid var(--dark-border); padding: 12px; border-radius: var(--radius-sm);">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px; font-weight:600;">
+              <span>${themeLabels[key]}</span>
+              <span style="color:var(--gold-primary);">${count} مشاركة (${pct}%)</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); height:8px; border-radius:10px; overflow:hidden;">
+              <div style="background: linear-gradient(90deg, #d4a017, #f7d070); width:${pct}%; height:100%; border-radius:10px; transition:width 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+            </div>
+          </div>
+        `;
+      }
+      document.getElementById('themeProgressBars').innerHTML = progressHtml;
 
       const list = document.getElementById('submissionsList');
 
@@ -536,6 +575,18 @@
           `<span class="star ${n <= s.rating ? 'active' : ''}" onclick="rateSubmission('${s.id}', ${n})">★</span>`
         ).join('');
 
+        // تنظيف رقم الهاتف للواتساب
+        const cleanPhone = s.phone.trim();
+        const waPhone = cleanPhone.startsWith('01') ? '2' + cleanPhone : cleanPhone.replace('+', '');
+        const waMsg = encodeURIComponent(`أهلاً أستاذ ${s.fullName}، نود التواصل معك بخصوص مشاركتك المميزة في مسابقة "روح مصرية" للتصوير الفوتوغرافي... 📸✨`);
+        const waUrl = `https://wa.me/${waPhone}?text=${waMsg}`;
+
+        // شارات منصة الفائزين
+        const winnerBadge = s.winnerPlace == 1 ? '<span class="status-badge" style="background:rgba(212,160,23,0.15); color:var(--gold-primary); border:1px solid rgba(212,160,23,0.3); margin-right:8px;">🏆 المركز الأول</span>' :
+                            s.winnerPlace == 2 ? '<span class="status-badge" style="background:rgba(192,192,192,0.15); color:#C0C0C0; border:1px solid rgba(192,192,192,0.3); margin-right:8px;">🥈 المركز الثاني</span>' :
+                            s.winnerPlace == 3 ? '<span class="status-badge" style="background:rgba(205,127,50,0.15); color:#CD7F32; border:1px solid rgba(205,127,50,0.3); margin-right:8px;">🥉 المركز الثالث</span>' :
+                            s.winnerPlace == 10 ? '<span class="status-badge" style="background:rgba(41,128,185,0.15); color:#2980B9; border:1px solid rgba(41,128,185,0.3); margin-right:8px;">⭐ قائمة التوب 10</span>' : '';
+
         // دعم الصور المتعددة
         const photos = s.photos || [{ url: s.photoBase64, fileName: s.fileName }];
         const mainPhotoUrl = photos[0].url || photos[0].base64;
@@ -558,18 +609,45 @@
               ${thumbsHtml}
             </div>
             <div class="submission-info">
-              <h4>${s.photoTitle}</h4>
-              <div class="meta">
+              <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+                <h4 style="margin:0;">${s.photoTitle}</h4>
+                ${winnerBadge}
+              </div>
+              <div class="meta" style="margin-top:8px;">
                 <span><i class="fas fa-user"></i> ${s.fullName}</span>
                 <span><i class="fas fa-envelope"></i> ${s.email}</span>
-                <span><i class="fas fa-phone"></i> ${s.phone}</span>
+                <span>
+                  <i class="fas fa-phone"></i> ${s.phone}
+                  <a href="${waUrl}" target="_blank" style="color:#25D366; font-size:1.1rem; margin-right:6px; display:inline-flex; align-items:center; text-decoration:none;" title="تواصل سريع عبر واتساب">
+                    <i class="fab fa-whatsapp"></i>
+                  </a>
+                </span>
                 <span><i class="fas fa-calendar"></i> ${date}</span>
               </div>
-              <span class="theme-badge">${s.theme}</span>
-              <span class="status-badge ${statusClass}">${statusText}</span>
-              ${s.instagram ? `<span style="color:var(--text-muted); font-size:0.85rem; margin-right:10px;"><i class="fab fa-instagram"></i> ${s.instagram}</span>` : ''}
-              ${s.photoDesc ? `<p style="color:var(--text-secondary); font-size:0.85rem; margin-top:8px;">${s.photoDesc}</p>` : ''}
-              <div class="rating" style="margin-top:8px;">${stars}</div>
+              <div style="margin-top: 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <span class="theme-badge">${s.theme}</span>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+                ${s.instagram ? `<span style="color:var(--text-muted); font-size:0.85rem;"><i class="fab fa-instagram"></i> ${s.instagram}</span>` : ''}
+              </div>
+              ${s.photoDesc ? `<p style="color:var(--text-secondary); font-size:0.85rem; margin-top:10px; line-height:1.5;">${s.photoDesc}</p>` : ''}
+              
+              <!-- تصنيف الفائز والتقييم -->
+              <div style="margin-top:12px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:0.85rem; color:var(--text-muted);">التقييم:</span>
+                  <div class="rating">${stars}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:0.85rem; color:var(--text-muted);">المركز:</span>
+                  <select onchange="updateWinner('${s.id}', this.value)" style="padding:4px 8px; font-size:0.8rem; background:var(--dark-surface); border:1px solid var(--dark-border); color:var(--text-primary); border-radius:4px; font-family:var(--font-ar); cursor:pointer;">
+                    <option value="0" ${s.winnerPlace == 0 ? 'selected' : ''}>--- ليس فائزاً ---</option>
+                    <option value="1" ${s.winnerPlace == 1 ? 'selected' : ''}>🏆 المركز الأول</option>
+                    <option value="2" ${s.winnerPlace == 2 ? 'selected' : ''}>🥈 المركز الثاني</option>
+                    <option value="3" ${s.winnerPlace == 3 ? 'selected' : ''}>🥉 المركز الثالث</option>
+                    <option value="10" ${s.winnerPlace == 10 ? 'selected' : ''}>⭐ قائمة التوب 10</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div class="submission-actions">
               <button class="action-btn btn-approve" onclick="updateSubmission('${s.id}', {status:'approved'})">
@@ -580,6 +658,9 @@
               </button>
               <button class="action-btn btn-download" onclick="downloadAllPhotos('${s.id}')">
                 <i class="fas fa-download"></i> تحميل الصور (${photos.length})
+              </button>
+              <button class="action-btn" onclick="deleteSubmission('${s.id}')" style="background: rgba(192, 57, 43, 0.15); color: #C0392B; border: 1px solid rgba(192, 57, 43, 0.25);">
+                <i class="fas fa-trash-alt"></i> حذف نهائي
               </button>
             </div>
           </div>
@@ -599,6 +680,65 @@
     // ===== RATING =====
     function rateSubmission(id, rating) {
       updateSubmission(id, { rating });
+    }
+
+    // ===== UPDATE WINNER =====
+    async function updateWinner(id, value) {
+      await updateSubmission(id, { winnerPlace: parseInt(value) });
+    }
+
+    // ===== DELETE SUBMISSION (FIRESTORE) =====
+    async function deleteSubmission(id) {
+      const confirmDelete = confirm("هل أنت متأكد من رغبتك في حذف هذه المشاركة نهائياً من السيرفر؟ (لا يمكن التراجع عن هذه الخطوة)");
+      if (!confirmDelete) return;
+
+      try {
+        await db.collection("submissions").doc(id).delete();
+        showToast("تم حذف المشاركة نهائياً من السيرفر 🗑️", "success");
+      } catch (error) {
+        console.error("Delete error:", error);
+        showToast("فشل حذف المشاركة من السيرفر", "error");
+      }
+    }
+
+    // ===== EXPORT TO EXCEL (CSV WITH UTF-8 BOM FOR ARABIC SUPPORT) =====
+    function exportToCSV() {
+      if (allSubmissions.length === 0) {
+        showToast("لا توجد بيانات لتصديرها", "error");
+        return;
+      }
+
+      // Headers (عناوين الأعمدة)
+      const headers = ["الاسم الكامل", "البريد الإلكتروني", "رقم الهاتف", "حساب إنستجرام", "المحور", "عنوان الصورة", "الوصف", "الحالة", "التقييم", "تاريخ المشاركة", "رابط الصورة"];
+      
+      // Rows (الصفوف)
+      const rows = allSubmissions.map(s => [
+        s.fullName,
+        s.email,
+        s.phone,
+        s.instagram || "لا يوجد",
+        s.theme,
+        s.photoTitle,
+        (s.photoDesc || "").replace(/\n/g, " "), // تنظيف النص من أسطر جديدة
+        s.status === "approved" ? "مقبول" : s.status === "rejected" ? "مرفوض" : "في الانتظار",
+        s.rating,
+        new Date(s.submittedAt).toLocaleString("ar-EG"),
+        s.photoBase64 || (s.photos && s.photos[0] ? s.photos[0].url : "")
+      ]);
+
+      // استخدام العلامة \uFEFF لضمان قراءة اللغة العربية بشكل سليم في Excel
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(row => row.map(val => `"${(val || "").toString().replace(/"/g, '""')}"`).join(","))].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `مشاركات_روح_مصرية_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("تم تصدير شيت Excel بنجاح 📊", "success");
     }
 
     // ===== DOWNLOAD ALL PHOTOS =====

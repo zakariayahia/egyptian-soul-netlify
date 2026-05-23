@@ -131,7 +131,7 @@ const uploadArea = document.getElementById('uploadArea');
 const photoFile = document.getElementById('photoFile');
 const previewContainer = document.getElementById('previewContainer');
 let selectedFiles = [];
-const MAX_FILES = 5;
+const MAX_FILES = 1;
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
 if (uploadArea && photoFile) {
@@ -380,6 +380,13 @@ async function lookupSubmissions() {
           `<img src="${p.url || p.base64}" style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid var(--dark-border);">`
         ).join('');
 
+        // يظهر زر الحذف فقط للمشاركات التي ما زالت "في الانتظار" (pending) لحماية نزاهة المسابقة
+        const deleteButton = s.status === 'pending' ? `
+          <button class="btn btn-outline" onclick="cancelSubmission('${s.id}')" style="margin-top:10px; padding:6px 12px; font-size:0.8rem; border-color:#C0392B; color:#C0392B; display:inline-flex; align-items:center; gap:5px; background:transparent;">
+            <i class="fas fa-trash"></i> إلغاء وحذف المشاركة
+          </button>
+        ` : '';
+
         html += `
           <div class="glass-card" style="padding:20px; margin-bottom:12px;">
             <div style="display:flex; gap:15px; align-items:flex-start; flex-wrap:wrap;">
@@ -387,11 +394,12 @@ async function lookupSubmissions() {
               <div style="flex:1; min-width:200px;">
                 <h4 style="margin-bottom:5px;">${s.photoTitle}</h4>
                 ${s.photoDesc ? `<p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:8px;">${s.photoDesc}</p>` : ''}
-                <div style="display:flex; gap:15px; flex-wrap:wrap; font-size:0.8rem; color:var(--text-muted);">
+                <div style="display:flex; gap:15px; flex-wrap:wrap; font-size:0.8rem; color:var(--text-muted); align-items:center;">
                   <span><i class="fas fa-calendar"></i> ${date}</span>
                   <span><i class="fas fa-images"></i> ${s.photoCount || 1} صورة</span>
                   <span style="${statusClass}; font-weight:600;">${statusText}</span>
                 </div>
+                ${deleteButton}
               </div>
             </div>
           </div>
@@ -404,6 +412,27 @@ async function lookupSubmissions() {
   } catch (error) {
     console.error(error);
     showToast('فشل جلب المشاركات', 'error');
+  }
+}
+
+// ===== CANCEL/DELETE SUBMISSION (FIRESTORE) =====
+async function cancelSubmission(id) {
+  const confirmCancel = confirm("هل أنت متأكد من رغبتك في إلغاء وحذف هذه المشاركة نهائياً؟ (لا يمكن استرجاعها)");
+  if (!confirmCancel) return;
+
+  if (typeof db === 'undefined') {
+    showToast('خطأ في الاتصال بقاعدة البيانات', 'error');
+    return;
+  }
+
+  try {
+    await db.collection("submissions").doc(id).delete();
+    showToast("تم إلغاء وحذف مشاركتك بنجاح ✅", "success");
+    // تحديث قائمة البحث تلقائياً
+    lookupSubmissions();
+  } catch (error) {
+    console.error("Delete error:", error);
+    showToast("فشل إلغاء المشاركة، حاول مرة أخرى", "error");
   }
 }
 
